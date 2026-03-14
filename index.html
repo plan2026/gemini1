@@ -1,161 +1,162 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحدي لغة التخطيط الموحدة</title>
-    <style>
-        :root {
-            --primary-color: #1a4a5e; /* لون رسمي استراتيجي */
-            --secondary-color: #c4a35a;
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background: var(--bg-gradient); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .container { background: white; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 100%; max-width: 800px; padding: 30px; border-top: 8px solid var(--primary-color); }
-        h1 { color: var(--primary-color); text-align: center; margin-bottom: 10px; font-size: 28px; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 20px; font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .stats-bar { display: flex; justify-content: space-around; background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-        .question-card { animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .question-text { font-size: 20px; color: var(--primary-color); font-weight: bold; margin-bottom: 20px; line-height: 1.6; }
-        .options-grid { display: grid; gap: 12px; }
-        .option { background: #fff; border: 2px solid #ddd; padding: 15px 20px; border-radius: 12px; cursor: pointer; transition: 0.3s; font-size: 16px; display: flex; align-items: center; gap: 10px; }
-        .option:hover { border-color: var(--primary-color); background: #f0f4f7; }
-        .option.correct { background: #d4edda; border-color: #28a745; color: #155724; }
-        .option.incorrect { background: #f8d7da; border-color: #dc3545; color: #721c24; }
-        .explanation-box { margin-top: 20px; padding: 20px; border-radius: 10px; display: none; background: #fff8e1; border-right: 5px solid var(--secondary-color); }
-        .explanation-box.show { display: block; animation: slideIn 0.4s ease; }
-        .btn-next { display: block; width: 100%; padding: 15px; background: var(--primary-color); color: white; border: none; border-radius: 10px; margin-top: 20px; cursor: pointer; font-size: 18px; font-weight: bold; }
-        .btn-next:disabled { background: #ccc; cursor: not-allowed; }
-        #results { text-align: center; display: none; }
-    </style>
+<meta charset="UTF-8">
+<title>اختبار التخطيط الاستراتيجي</title>
+
+<style>
+body{
+font-family: Arial;
+background:#f4f6f8;
+padding:40px;
+}
+
+.container{
+max-width:800px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+.option{
+border:1px solid #ddd;
+padding:12px;
+margin:10px 0;
+cursor:pointer;
+border-radius:8px;
+}
+
+.option:hover{
+background:#f2f2f2;
+}
+
+.correct{
+background:#d4edda;
+}
+
+.incorrect{
+background:#f8d7da;
+}
+
+button{
+padding:10px 20px;
+margin-top:20px;
+}
+</style>
+
 </head>
+
 <body>
 
 <div class="container">
-    <div id="quiz-ui">
-        <h1>🎯 تحدي مهندسي التخطيط الوطني</h1>
-        <p class="subtitle">أتقن "لغة التخطيط الموحدة" لضمان تجميع الخطط بنجاح</p>
 
-        <div class="stats-bar">
-            <span>السؤال: <span id="current-idx">1</span>/5</span>
-            <span>النتيجة: <span id="score">0</span></span>
-        </div>
+<h2>اختبار مبادئ التخطيط الاستراتيجي</h2>
 
-        <div class="question-card">
-            <div class="question-text" id="question-text"></div>
-            <div class="options-grid" id="options-grid"></div>
-            <div class="explanation-box" id="explanation-box">
-                <strong id="exp-title"></strong>
-                <p id="exp-text" style="margin-top: 10px; line-height: 1.5;"></p>
-            </div>
-        </div>
+<div id="quiz"></div>
 
-        <button class="btn-next" id="next-btn" onclick="loadNextQuestion()" disabled>السؤال التالي</button>
-    </div>
+<button onclick="nextQuestion()">السؤال التالي</button>
 
-    <div id="results">
-        <h2 style="color: var(--primary-color);">تهانينا! أكملت التدريب</h2>
-        <div style="font-size: 60px; margin: 20px 0;">🏆</div>
-        <p style="font-size: 20px;">درجتك النهائية: <span id="final-score"></span> من 5</p>
-        <p style="margin-top: 15px; color: #666;">أنت الآن جاهز للمساهمة في بناء الاستراتيجية الوطنية بلغة موحدة.</p>
-        <button class="btn-next" onclick="location.reload()">إعادة التحدي</button>
-    </div>
 </div>
 
 <script>
-    const questions = [
-        {
-            q: "أي من الجمل التالية تمثل 'غاية استراتيجية' (Strategic Goal) على المستوى الوطني؟",
-            options: ["زيادة إنتاج القمح بنسبة 10%", "تعزيز الأمن الغذائي المستدام للدولة", "توزيع 500 طن من البذور", "إنشاء 3 صوامع تخزين"],
-            correct: 1,
-            exp: "الغاية (Goal) هي نتيجة نهائية عامة وطويلة الأمد. 'تعزيز الأمن الغذائي' هو توجه عام، بينما الأرقام المحددة (10%) تحوله إلى 'هدف استراتيجي'."
-        },
-        {
-            q: "إذا كانت الوزارة 'أ' تقيس النجاح بـ (نسبة الرضا) والوزارة 'ب' تقيسه بـ (عدد الشكاوى)، ما هي المشكلة في التجميع الوطني؟",
-            options: ["لا توجد مشكلة", "اختلاف التكلفة", "غياب وحدة قياس موحدة (Standard Measure)", "اختلاف الميزانية"],
-            correct: 2,
-            exp: "عند التجميع الوطني، يجب توحيد 'وحدة القياس'. لا يمكن دمج أرقام مطلقة مع نسب مئوية في تقرير قطاعي واحد دون معيار موحد."
-        },
-        {
-            q: "ما هو الوصف الصحيح لـ 'المبادرة' (Initiative)؟",
-            options: ["هي النتيجة التي نريد الوصول إليها", "هي الرقم الذي نقيس به النجاح", "هي مشروع أو برنامج زمني لتحقيق هدف معين", "هي الرؤية الوطنية"],
-            correct: 2,
-            exp: "المبادرة هي 'الأداة التنفيذية'. هي العمل الذي نقوم به (مثل مشروع إنشاء مدرسة) لتحقيق الهدف (مثل رفع جودة التعليم)."
-        },
-        {
-            q: "قامت مؤسسة بصياغة هدف: (تطوير كفاءة الموظفين). لماذا يرفض خبير التخطيط هذا الهدف؟",
-            options: ["لأنه هدف طويل جداً", "لأنه غير قابل للقياس (Not Measurable)", "لأنه هدف صعب التحقيق", "لأنه يحتاج ميزانية كبيرة"],
-            correct: 1,
-            exp: "لغة التخطيط الموحدة ترفض الكلمات العائمة مثل 'تطوير' أو 'تحسين' بدون أرقام. الصياغة الصحيحة: (رفع نسبة كفاءة الموظفين إلى 90%)."
-        },
-        {
-            q: "في هرم التخطيط، ماذا يحدث عند الانتقال من المستوى المؤسسي إلى المستوى الوطني؟",
-            options: ["تزداد التفاصيل التشغيلية", "يتم إلغاء المبادرات", "يتم تجميع (Aggregation) الأهداف لتصب في غايات قطاعية", "تنفصل الخطط عن بعضها"],
-            correct: 2,
-            exp: "هذا هو جوهر عملك! الخطط المؤسسية الصغرى يجب أن 'تتجمع' كقطع المكعبات لتشكل في النهاية صورة الاستراتيجية الوطنية الكبرى."
-        }
-    ];
 
-    let currentIdx = 0;
-    let score = 0;
+const questionBank = [
 
-    function loadQuestion() {
-        const q = questions[currentIdx];
-        document.getElementById('question-text').innerText = q.q;
-        document.getElementById('current-idx').innerText = currentIdx + 1;
-        const grid = document.getElementById('options-grid');
-        grid.innerHTML = '';
-        document.getElementById('explanation-box').classList.remove('show');
-        document.getElementById('next-btn').disabled = true;
+{
+text:"بدأت جهة حكومية إعداد خطتها دون الرجوع للاستراتيجية الوطنية. ما المشكلة؟",
+options:[
+"غياب الترابط العمودي",
+"ضعف الموارد",
+"قلة الموظفين",
+"ضعف التدريب"
+],
+correct:0
+},
 
-        q.options.forEach((opt, i) => {
-            const btn = document.createElement('div');
-            btn.className = 'option';
-            btn.innerHTML = `<span style="font-weight:bold">${String.fromCharCode(65 + i)}:</span> ${opt}`;
-            btn.onclick = () => checkAnswer(i, btn);
-            grid.appendChild(btn);
-        });
-    }
+{
+text:"اعتمد فريق التخطيط على الانطباعات بدلاً من البيانات. ما الخلل؟",
+options:[
+"غياب التخطيط المبني على الأدلة",
+"زيادة الابتكار",
+"زيادة الموارد",
+"تحسن الأداء"
+],
+correct:0
+},
 
-    function checkAnswer(idx, btn) {
-        const q = questions[currentIdx];
-        if (document.getElementById('next-btn').disabled === false) return; // منع تغيير الإجابة
+{
+text:"لم تتم مشاركة الإدارات الأخرى في إعداد الخطة. ما النتيجة؟",
+options:[
+"ضعف التملك المؤسسي",
+"زيادة الابتكار",
+"زيادة الموارد",
+"تحسن التنفيذ"
+],
+correct:0
+}
 
-        const allOptions = document.querySelectorAll('.option');
-        if (idx === q.correct) {
-            btn.classList.add('correct');
-            score++;
-            document.getElementById('score').innerText = score;
-            document.getElementById('exp-title').innerText = "✅ إجابة صحيحة!";
-        } else {
-            btn.classList.add('incorrect');
-            allOptions[q.correct].classList.add('correct');
-            document.getElementById('exp-title').innerText = "❌ إجابة غير دقيقة";
-        }
+];
 
-        document.getElementById('exp-text').innerText = q.exp;
-        document.getElementById('explanation-box').classList.add('show');
-        document.getElementById('next-btn').disabled = false;
-    }
+let currentQuestion = 0;
 
-    function loadNextQuestion() {
-        currentIdx++;
-        if (currentIdx < questions.length) {
-            loadQuestion();
-        } else {
-            showFinalResults();
-        }
-    }
+function renderQuestion(){
 
-    function showFinalResults() {
-        document.getElementById('quiz-ui').style.display = 'none';
-        document.getElementById('results').style.display = 'block';
-        document.getElementById('final-score').innerText = score;
-    }
+let q = questionBank[currentQuestion];
 
-    loadQuestion();
+let html = `<h3>${q.text}</h3>`;
+
+q.options.forEach((option,index)=>{
+
+html += `
+<div class="option" onclick="selectOption(${index})">
+${option}
+</div>
+`;
+
+});
+
+document.getElementById("quiz").innerHTML = html;
+
+}
+
+function selectOption(index){
+
+let q = questionBank[currentQuestion];
+
+let options = document.querySelectorAll(".option");
+
+options.forEach((opt,i)=>{
+
+if(i==q.correct) opt.classList.add("correct");
+
+if(i==index && i!=q.correct) opt.classList.add("incorrect");
+
+});
+
+}
+
+function nextQuestion(){
+
+currentQuestion++;
+
+if(currentQuestion >= questionBank.length){
+
+document.getElementById("quiz").innerHTML="<h3>انتهى الاختبار</h3>";
+
+return;
+
+}
+
+renderQuestion();
+
+}
+
+renderQuestion();
+
 </script>
+
 </body>
 </html>
